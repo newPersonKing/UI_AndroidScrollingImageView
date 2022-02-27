@@ -1,3 +1,9 @@
+___
+知识点：
+1 绘制多张bitmap 实现动态背景
+___
+
+
 [![](https://jitpack.io/v/q42/androidscrollingimageview.svg)](https://jitpack.io/#q42/androidscrollingimageview)
 
 # Scrolling Image View

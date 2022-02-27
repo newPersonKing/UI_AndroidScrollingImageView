@@ -75,6 +75,7 @@ public class ScrollingImageView extends View {
             // When true, randomness is ignored and bitmaps are loaded in the order as they appear in the src array */
             final boolean contiguous = ta.getBoolean(R.styleable.ScrollingImageView_contiguous, false);
 
+            // randomness 应该是一个资源数组
             int[] randomness = new int[0];
             if (randomnessResourceId > 0) {
                 randomness = getResources().getIntArray(randomnessResourceId);
@@ -85,6 +86,7 @@ public class ScrollingImageView extends View {
                 int resourceId = ta.getResourceId(R.styleable.ScrollingImageView_source, 0);
                 TypedArray typedArray = getResources().obtainTypedArray(resourceId);
                 try {
+                    // randomness 存储的应该是bitmap 展示的个数
                     int bitmapsSize = 0;
                     for (int r : randomness) {
                         bitmapsSize += r;
@@ -92,7 +94,9 @@ public class ScrollingImageView extends View {
 
                     bitmaps = new ArrayList<>(Math.max(typedArray.length(), bitmapsSize));
 
+                    // 处理同一张图片 应该被添加几次
                     for (int i = 0; i < typedArray.length(); i++) {
+                        // multiplier 同一张图片要被处理几次
                         int multiplier = 1;
                         if (randomness.length > 0 && i < randomness.length) {
                             multiplier = Math.max(1, randomness[i]);
@@ -102,11 +106,12 @@ public class ScrollingImageView extends View {
                         for (int m = 0; m < multiplier; m++) {
                             bitmaps.add(bitmap);
                         }
-
+                        // 计算图片的最高尺寸
                         maxBitmapHeight = Math.max(bitmap.getHeight(), maxBitmapHeight);
                     }
 
                     Random random = new Random();
+                    // 计算每一个画布的内容
                     this.scene = new int[sceneLength];
                     for (int i = 0; i < this.scene.length; i++) {
                         if (contiguous){
@@ -157,13 +162,16 @@ public class ScrollingImageView extends View {
                 return;
             }
 
+            // 画布大小
             canvas.getClipBounds(clipBounds);
 
+            // offset 初始为0
             while (offset <= -getBitmap(arrayIndex).getWidth()) {
                 offset += getBitmap(arrayIndex).getWidth();
                 arrayIndex = (arrayIndex + 1) % scene.length;
             }
 
+            // arrayIndex 初始也是0
             float left = offset;
             for (int i = 0; left < clipBounds.width(); i++) {
                 Bitmap bitmap = getBitmap((arrayIndex + i) % scene.length);
